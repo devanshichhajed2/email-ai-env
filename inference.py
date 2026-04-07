@@ -3,45 +3,46 @@ from env.environment import EmailEnv
 from env.models import Action
 from openai import OpenAI
 
-API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
+API_BASE_URL = os.environ["API_BASE_URL"]
+API_KEY = os.environ["API_KEY"]
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
-HF_TOKEN = os.getenv("HF_TOKEN")
 
 client = OpenAI(
     base_url=API_BASE_URL,
-    api_key=HF_TOKEN
+    api_key=API_KEY
 )
 
-
 def get_action_from_ai(email_text):
-    email = email_text.lower()
+    prompt = f"""
+You are an email assistant.
 
-    
-    if "refund" in email or "worst" in email or "not working" in email:
-        return Action(
-            category="complaint",
-            reply="We sincerely apologize for the inconvenience. We understand your concern and will process your refund quickly."
-        )
+Classify the email and generate a reply.
 
-    elif "help" in email or "password" in email:
-        return Action(
-            category="request",
-            reply="Thank you for reaching out. We will help you resolve your issue. Please follow the instructions provided."
-        )
+Email:
+{email_text}
 
-    elif "price" in email or "pricing" in email:
-        return Action(
-            category="query",
-            reply="Thank you for your interest. We provide flexible pricing plans. Please let us know your requirements."
-        )
+Return ONLY in this format:
+category: <category>
+reply: <reply>
+"""
 
-    
-    else:
-        return Action(
-            category="query",
-            reply="Thank you for your message. We will get back to you shortly."
-        )
+    response = client.chat.completions.create(
+        model=MODEL_NAME,
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3
+    )
 
+    text = response.choices[0].message.content
+
+    category = "query"
+    reply = text
+
+    if "category:" in text.lower():
+        category = text.lower().split("category:")[1].split("\n")[0].strip()
+
+    return Action(category=category, reply=reply)
 def run_task(task_type):
     env = EmailEnv()
     obs = env.reset(task_type=task_type)
