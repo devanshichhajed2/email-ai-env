@@ -9,4 +9,4 @@ RUN pip install fastapi uvicorn pydantic openenv-core
 
 EXPOSE 8000
 
-CMD ["python", "-m", "server.app"]
+CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]
