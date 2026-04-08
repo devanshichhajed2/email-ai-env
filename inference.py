@@ -12,37 +12,47 @@ client = OpenAI(
     api_key=API_KEY
 )
 
+
 def get_action_from_ai(email_text):
     prompt = f"""
 You are an email assistant.
-
 Classify the email and generate a reply.
-
 Email:
 {email_text}
-
 Return ONLY in this format:
 category: <category>
 reply: <reply>
 """
 
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.3
-    )
+    try:
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3
+        )
 
-    text = response.choices[0].message.content
+        text = response.choices[0].message.content
 
-    category = "query"
-    reply = text
+        # parsing
+        category = "query"
+        reply = text
 
-    if "category:" in text.lower():
-        category = text.lower().split("category:")[1].split("\n")[0].strip()
+        if "category:" in text.lower():
+            category = text.lower().split("category:")[1].split("\n")[0].strip()
 
-    return Action(category=category, reply=reply)
+        return Action(category=category, reply=reply)
+
+    except Exception as e:
+        print("API ERROR:", str(e))  # important for logs
+
+        # ✅ SAFE FALLBACK (VERY IMPORTANT)
+        return Action(
+            category="query",
+            reply="Thank you for your message. We will get back to you shortly."
+        )
+
 def run_task(task_type):
     env = EmailEnv()
     obs = env.reset(task_type=task_type)
@@ -59,31 +69,29 @@ def run_task(task_type):
 
 
 def main():
-    for task in ["easy", "medium", "hard"]:
+    print("START")
+
+    try:
         env = EmailEnv()
 
-        # START block
-        print(f"[START] task={task}", flush=True)
+        for task in ["easy", "medium", "hard"]:
+            print(f"\nSTEP: Running {task} task")
 
-        obs = env.reset(task_type=task)
+            obs = env.reset(task_type=task)
+            print("Email:", obs.email_text)
 
-        step_count = 0
-        total_score = 0.0
+            action = get_action_from_ai(obs.email_text)
 
-        action = get_action_from_ai(obs.email_text)
-        result = env.step(action)
+            result = env.step(action)
 
-        step_count += 1
-        reward = result["reward"].score
-        total_score += reward
+            print("Action:", action)
+            print("Reward:", result["reward"].score)
 
-        # STEP block
-        print(f"[STEP] step={step_count} reward={reward}", flush=True)
+    except Exception as e:
+        print("FATAL ERROR:", str(e))
 
-        # END block
-        print(f"[END] task={task} score={total_score} steps={step_count}", flush=True)
+    print("END")
 
-    print("\nEND")
 
 if __name__ == "__main__":
     main()
