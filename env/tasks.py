@@ -48,12 +48,12 @@ def get_task_email(task_type):
 def evaluate_task(task_type, email, action):
     if task_type == "easy":
         if action.category == email.get("category"):
-            return 1.0, "Correct classification"
+            return 0.9, "Correct classification"
         else:
-            return 0.0, "Wrong classification"
+            return 0.1, "Wrong classification"
 
     elif task_type == "medium":
-        score = 0.0
+        score = 0.1
 
         if action.reply:
             if "help" in action.reply.lower():
@@ -66,7 +66,7 @@ def evaluate_task(task_type, email, action):
         return score, "Reply evaluated"
 
     elif task_type == "hard":
-        score = 0.0
+        score = 0.1
 
         if action.reply:
             if "sorry" in action.reply.lower():
@@ -78,4 +78,4 @@ def evaluate_task(task_type, email, action):
 
         return score, "Handled complex email"
 
-    return 0.0, "Invalid task"
+    return 0.1, "Invalid task"
