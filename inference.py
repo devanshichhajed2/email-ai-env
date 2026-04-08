@@ -69,29 +69,36 @@ def run_task(task_type):
 
 
 def main():
-    print("START")
-
     try:
         env = EmailEnv()
 
         for task in ["easy", "medium", "hard"]:
-            print(f"\nSTEP: Running {task} task")
+            
+            # ✅ START BLOCK
+            print(f"[START] task={task}", flush=True)
 
             obs = env.reset(task_type=task)
-            print("Email:", obs.email_text)
+
+            step_count = 0
+            total_reward = 0.0
+
+            # we run only 1 step (your env ends in 1 step)
+            step_count += 1
 
             action = get_action_from_ai(obs.email_text)
-
             result = env.step(action)
 
-            print("Action:", action)
-            print("Reward:", result["reward"].score)
+            reward = result["reward"].score
+            total_reward += reward
+
+            # ✅ STEP BLOCK
+            print(f"[STEP] step={step_count} reward={reward}", flush=True)
+
+            # ✅ END BLOCK
+            print(f"[END] task={task} score={total_reward} steps={step_count}", flush=True)
 
     except Exception as e:
-        print("FATAL ERROR:", str(e))
-
-    print("END")
-
+        print(f"[ERROR] message={str(e)}", flush=True)
 
 if __name__ == "__main__":
     main()
