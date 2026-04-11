@@ -90,7 +90,7 @@ def main():
 
             reward_str = f"{reward:.2f}"
             done_str = str(done).lower()
-            error_str = error if error else "null"
+            error_str = "null" if error is None else "api_error"
 
             # STEP
             print(
