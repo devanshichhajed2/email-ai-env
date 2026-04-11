@@ -1,0 +1,45 @@
+name: email-ai-environment
+description: AI Email Assistant environment for classification and response generation
+
+version: 1.0
+
+entrypoint:
+  type: http
+  url: http://localhost:8000
+
+endpoints:
+  reset:
+    path: /reset
+    method: POST
+
+  step:
+    path: /step
+    method: POST
+
+observation_space:
+  type: object
+  properties:
+    email_text:
+      type: string
+    sender_type:
+      type: string
+    urgency:
+      type: string
+    emotion:
+      type: string
+
+action_space:
+  type: object
+  properties:
+    category:
+      type: string
+    reply:
+      type: string
+
+reward:
+  type: object
+  properties:
+    score:
+      type: number
+    feedback:
+      type: string
