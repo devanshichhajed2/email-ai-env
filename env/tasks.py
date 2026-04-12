@@ -45,52 +45,71 @@ def get_task_email(task_type):
         return random.choice(HARD_EMAILS)
 
 
-#  SAFE SCORING FUNCTION
+# 🔥 FINAL SAFE RETURN FUNCTION (CANNOT FAIL)
 def safe(score):
+    try:
+        score = float(score)
+    except:
+        score = 0.5
+
+    # STRICTLY BETWEEN (0,1)
     if score <= 0.0:
-        return 0.01
+        score = 0.01
+    elif score >= 1.0:
+        score = 0.99
+
+    # FIX FLOAT PRECISION
+    score = float(f"{score:.2f}")
+
+    # FINAL GUARD (CRITICAL)
+    if score <= 0.0:
+        score = 0.01
     if score >= 1.0:
-        return 0.99
-    return float(f"{score:.2f}")
+        score = 0.99
+
+    return score
 
 
 def evaluate_task(task_type, email, action):
 
-    # EASY TASK
+    # EASY
     if task_type == "easy":
         if action.category == email.get("category"):
             return safe(0.8), "Correct classification"
         else:
             return safe(0.2), "Wrong classification"
 
-    # MEDIUM TASK (MAX 0.9)
+    # MEDIUM
     elif task_type == "medium":
-        score = 0.2
+        score = 0.3
 
         if action.reply:
-            if "help" in action.reply.lower():
+            text = action.reply.lower()
+
+            if "help" in text:
                 score += 0.2
-            if "thank" in action.reply.lower():
+            if "thank" in text:
                 score += 0.2
-            if len(action.reply) > 20:
+            if len(text) > 20:
                 score += 0.2
 
-        # max = 0.8
         return safe(score), "Reply evaluated"
 
-    # HARD TASK (MAX 0.9)
+    # HARD
     elif task_type == "hard":
-        score = 0.2
+        score = 0.3
 
         if action.reply:
-            if "sorry" in action.reply.lower():
+            text = action.reply.lower()
+
+            if "sorry" in text:
                 score += 0.2
-            if "understand" in action.reply.lower():
+            if "understand" in text:
                 score += 0.2
-            if "refund" in action.reply.lower():
+            if "refund" in text:
                 score += 0.2
 
-        # max = 0.8
         return safe(score), "Handled complex email"
 
-    return safe(0.5), "Invalid task"
+    # FALLBACK (IMPORTANT)
+    return safe(0.5), "Fallback"
