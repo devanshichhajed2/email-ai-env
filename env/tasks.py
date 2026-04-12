@@ -45,7 +45,7 @@ def get_task_email(task_type):
         return random.choice(HARD_EMAILS)
 
 
-# 🔥 SAFE SCORING FUNCTION
+#  SAFE SCORING FUNCTION
 def safe(score):
     if score <= 0.0:
         return 0.01
