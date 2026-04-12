@@ -25,17 +25,35 @@ def step(action: dict):
     action_obj = Action(**action)
     result = env.step(action_obj)
 
+    raw_score = result["reward"].score
+
+    try:
+        score = float(raw_score)
+    except:
+        score = 0.5
+
+    if score <= 0.0:
+        score = 0.01
+    elif score >= 1.0:
+        score = 0.99
+
+    score = float(f"{score:.2f}")
+
+    if score <= 0.0:
+        score = 0.01
+    if score >= 1.0:
+        score = 0.99
+
     return {
         "observation": result["observation"].dict(),
         "reward": {
-            "score": float(result["reward"].score),
+            "score": score,
             "feedback": str(result["reward"].feedback)
         },
         "done": bool(result["done"]),
         "info": {}
     }
-
-
+    
 @app.get("/state")
 def get_state():
     return env.state()
