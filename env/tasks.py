@@ -45,45 +45,52 @@ def get_task_email(task_type):
         return random.choice(HARD_EMAILS)
 
 
+# 🔥 SAFE SCORING FUNCTION
+def safe(score):
+    if score <= 0.0:
+        return 0.01
+    if score >= 1.0:
+        return 0.99
+    return float(f"{score:.2f}")
+
+
 def evaluate_task(task_type, email, action):
 
-    #  EASY TASK 
+    # EASY TASK
     if task_type == "easy":
         if action.category == email.get("category"):
-            return 0.8, "Correct classification"
+            return safe(0.8), "Correct classification"
         else:
-            return 0.2, "Wrong classification"
+            return safe(0.2), "Wrong classification"
 
-    # MEDIUM TASK 
+    # MEDIUM TASK (MAX 0.9)
     elif task_type == "medium":
-        score = 0.2  # base score
+        score = 0.2
 
         if action.reply:
-            reply = action.reply.lower()
-
-            if "help" in reply:
+            if "help" in action.reply.lower():
                 score += 0.2
-            if "thank" in reply:
+            if "thank" in action.reply.lower():
                 score += 0.2
-            if len(reply) > 20:
+            if len(action.reply) > 20:
                 score += 0.2
 
-        return score, "Reply evaluated"
+        # max = 0.8
+        return safe(score), "Reply evaluated"
 
-    # HARD TASK 
+    # HARD TASK (MAX 0.9)
     elif task_type == "hard":
-        score = 0.2  # base score
+        score = 0.2
 
         if action.reply:
-            reply = action.reply.lower()
-
-            if "sorry" in reply:
+            if "sorry" in action.reply.lower():
                 score += 0.2
-            if "understand" in reply:
+            if "understand" in action.reply.lower():
                 score += 0.2
-            if "refund" in reply:
+            if "refund" in action.reply.lower():
                 score += 0.2
 
-        return score, "Handled complex email"
+        # max = 0.8
+        return safe(score), "Handled complex email"
 
-    return 0.2, "Invalid task"
+    return safe(0.5), "Invalid task"
