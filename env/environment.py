@@ -1,4 +1,4 @@
-rom env.models import Observation, Action, Reward
+from env.models import Observation, Action, Reward
 from env.tasks import get_task_email, evaluate_task
 
 
@@ -22,22 +22,31 @@ class EmailEnv:
             action
         )
 
-        # FINAL GLOBAL SAFETY FIX
+        # BULLETPROOF SAFETY FIX
         try:
+            # ensure score is float
             if score is None:
                 score = 0.5
 
             score = float(score)
 
+            # force into valid range
             if score <= 0.0:
                 score = 0.01
             elif score >= 1.0:
                 score = 0.99
 
-            score = round(score, 2)
+            # remove floating precision issues
+            score = float(f"{score:.2f}")
+
+            # final safety check
+            if score <= 0.0:
+                score = 0.01
+            elif score >= 1.0:
+                score = 0.99
 
         except Exception:
-            # fallback in case anything unexpected happens
+            # fallback in any unexpected case
             score = 0.5
             feedback = "Safe fallback applied"
 
