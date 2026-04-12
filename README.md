@@ -1,14 +1,12 @@
+---
+title: Email AI Env
+emoji: 🤖
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_file: server/app.py
+pinned: false
+---
+
 # Email AI Environment
-
-AI-powered email assistant using OpenEnv.
-
-## Features
-- Email classification
-- Smart reply generation
-- Multi-level tasks
-- FastAPI + Docker deployment
-
-## Endpoints
-- POST /reset
-- POST /step
-- GET /state
+This project runs an AI-powered email classification and response system.
