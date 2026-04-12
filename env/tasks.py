@@ -45,7 +45,7 @@ def get_task_email(task_type):
         return random.choice(HARD_EMAILS)
 
 
-# 🔥 FINAL SAFE RETURN FUNCTION (CANNOT FAIL)
+#FINAL SAFE RETURN FUNCTION
 def safe(score):
     try:
         score = float(score)
@@ -61,7 +61,7 @@ def safe(score):
     # FIX FLOAT PRECISION
     score = float(f"{score:.2f}")
 
-    # FINAL GUARD (CRITICAL)
+    # FINAL GUARD 
     if score <= 0.0:
         score = 0.01
     if score >= 1.0:
@@ -111,5 +111,5 @@ def evaluate_task(task_type, email, action):
 
         return safe(score), "Handled complex email"
 
-    # FALLBACK (IMPORTANT)
+    # FALLBACK
     return safe(0.5), "Fallback"
