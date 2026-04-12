@@ -9,4 +9,5 @@ pinned: false
 ---
 
 # Email AI Environment
-This project runs an AI-powered email classification and response system.
+
+This project is an OpenEnv-compatible email assistant environment with task reset, step execution, and state tracking.
