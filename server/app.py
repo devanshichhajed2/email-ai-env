@@ -17,7 +17,7 @@ def home():
 @app.post("/reset")
 def reset(task_type: str = "easy"):
     obs = env.reset(task_type=task_type)
-    return obs.model_dump()
+    return obs.dict()
 
 
 @app.post("/step")
@@ -26,10 +26,13 @@ def step(action: dict):
     result = env.step(action_obj)
 
     return {
-        "observation": result["observation"].model_dump(),
-        "reward": result["reward"].model_dump(),
-        "done": result["done"],
-        "info": result["info"]
+        "observation": result["observation"].dict(),
+        "reward": {
+            "score": float(result["reward"].score),
+            "feedback": str(result["reward"].feedback)
+        },
+        "done": bool(result["done"]),
+        "info": {}
     }
 
 

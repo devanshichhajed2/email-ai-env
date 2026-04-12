@@ -1,12 +1,11 @@
-<<<<<<< HEAD
 name: email-ai-environment
-description: AI Email Assistant environment for classification and response generation
+description: AI Email Assistant environment
 
 version: 1.0
 
 entrypoint:
   type: http
-  url: http://localhost:8000
+  url: http://localhost:7860
 
 endpoints:
   reset:
@@ -16,6 +15,10 @@ endpoints:
   step:
     path: /step
     method: POST
+
+  state:
+    path: /state
+    method: GET
 
 observation_space:
   type: object
@@ -43,50 +46,4 @@ reward:
     score:
       type: number
     feedback:
-=======
-name: email-ai-environment
-description: AI Email Assistant environment for classification and response generation
-
-version: 1.0
-
-entrypoint:
-  type: http
-  url: http://localhost:8000
-
-endpoints:
-  reset:
-    path: /reset
-    method: POST
-
-  step:
-    path: /step
-    method: POST
-
-observation_space:
-  type: object
-  properties:
-    email_text:
-      type: string
-    sender_type:
-      type: string
-    urgency:
-      type: string
-    emotion:
-      type: string
-
-action_space:
-  type: object
-  properties:
-    category:
-      type: string
-    reply:
-      type: string
-
-reward:
-  type: object
-  properties:
-    score:
-      type: number
-    feedback:
->>>>>>> 9442762521da75db7afedec0a183407fecae9595
       type: string
